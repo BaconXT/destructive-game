@@ -10,8 +10,8 @@ const Composite = Matter.Composite;
 let engine;
 let world;
 var ground;
-var fruit,rope;
-var fruit_con;
+var ball_demolition,rope;
+var ball_demolition_con;
 
 var btn1;
 var btn2;
@@ -19,6 +19,7 @@ var btn1_Img;
 var btn2_Img;
 var bg_img;
 var ball;
+var bola_de_demolicao;
 var guindaste;
 var guindaste_Img;
 var casa1;
@@ -61,11 +62,11 @@ function setup()
 
   ground = new Ground(200,680,600,20);
 
-  rope = new Rope(7,{x:400,y:30});
-  fruit = Bodies.circle(300,300,20);
-  Matter.Composite.add(rope.body,fruit);
+  rope = new Rope(7.5,{x:400,y:30});
+  ball_demolition = Bodies.circle(300,300,20);
+  Matter.Composite.add(rope.body,ball_demolition);
 
-  fruit_con = new Link(rope,fruit);
+  ball_demolition_con = new Link(rope,ball_demolition);
 
   casa1 = createSprite(630, 150, 50, 50);
   casa1.addImage(casa1_Img);
@@ -98,11 +99,13 @@ function setup()
   guindaste = createSprite(200, 260, 100, 100);
   guindaste.addImage(guindaste_Img);
   guindaste.scale = 1;
+  
 
   rectMode(CENTER);
   ellipseMode(RADIUS);
-  textSize(50);
   imageMode(CENTER);
+
+
   
 }
 
@@ -110,38 +113,79 @@ function draw()
 {
   background(51);
 
-
-  if(keyIsDown(RIGHT_ARROW)) {
-    RightForce();
-
-  }
-  if(keyIsDown(LEFT_ARROW)) {
+  if(keyDown(LEFT_ARROW)){
     LeftForce();
-
   }
+
+  if(keyDown(RIGHT_ARROW)){
+    RightForce();
+  }
+
+  if(keyDown(UP_ARROW)){
+    UpForce();
+  }
+
+  if(keyDown(DOWN_ARROW)){
+    DownForce();
+  }
+
+
 
 
   image(bg_img,width/2,height/2,960,635);
 
-  image(ball,fruit.position.x,fruit.position.y,70,70);
+  image(ball,ball_demolition.position.x,ball_demolition.position.y,70,70);
   rope.show();
   Engine.update(engine);
   ground.show();
 
-
+  collide(ball_demolition,casa1,85);
+  collide(ball_demolition,casa2,95);
+  collide(ball_demolition,casa3,85);
+  collide(ball_demolition,casa4,85);
+  collide(ball_demolition,casa5,85);
+  collide(ball_demolition,casa6,120);
+  collide(ball_demolition,casa7,120);
+      
 
 
   drawSprites();
- 
-  
+
+  fill(0, 0, 0);
+  textSize(35);
+  text("Aperte as setas para mover a bola",250, 600);
+
 
 }
 
 
 function RightForce() {
-  Matter.Body.applyForce(ball,{x:0, y:0}, {x:1.5, y:-0.25});
+  Matter.Body.applyForce(ball_demolition,{x:0, y:0}, {x:0.001, y:0});
 }
 
+
+
 function LeftForce() {
-  Matter.Body.applyForce(ball,{x:0, y:0}, {x:-1.5, y:-0.25});
+  Matter.Body.applyForce(ball_demolition,{x:0, y:0}, {x:-0.001, y:0});
+}
+
+function UpForce() {
+  Matter.Body.applyForce(ball_demolition,{x:0, y:0}, {x:0, y:-0.001});
+}
+
+function DownForce() {
+  Matter.Body.applyForce(ball_demolition,{x:0, y:0}, {x:0, y:0.001});
+}
+
+function collide(body,sprite,x)
+{
+  if(body!=null)
+        {
+         var d = dist(body.position.x,body.position.y,sprite.position.x,sprite.position.y);
+          if(d<=x)
+            {
+              sprite.destroy();
+              return true; 
+            }
+         }
 }
